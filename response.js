@@ -23,8 +23,15 @@ function getServices(serviceList, url) {
   if (!serviceList) {
     return {};
   }
-
-  return Array.from(serviceList.service).reduce((a, { serviceType, serviceId, SCPDURL, controlURL, eventSubURL }) => {
+	
+	let arr = [];
+	if(serviceList.length){
+		arr = Array.from(serviceList.service);
+	} else {
+		arr = [serviceList.service];
+	}
+	
+  return arr.reduce((a, { serviceType, serviceId, SCPDURL, controlURL, eventSubURL }) => {
     a[serviceId] = {
       serviceType,
       SCPDURL: absoluteUrl(url, SCPDURL),
@@ -51,7 +58,7 @@ function parseDeviceDescription(xmlString, url) {
     iconList,
     serviceList
   } = obj.root.device;
-
+  
   return {
     deviceType,
     friendlyName,
@@ -74,7 +81,10 @@ function getActionArguments(argumentList) {
     }
   }
 
-  return Array.from(argumentList.argument).reduce((a, { direction, name, relatedStateVariable }) => {
+let args = argumentList.argument;
+if(!args.length) args = [argumentList.argument];
+
+  return Array.from(args).reduce((a, { direction, name, relatedStateVariable }) => {
     if (direction === 'in') {
       a.inputs.push({
         name,
@@ -136,7 +146,7 @@ function parseServiceDescription(xmlString) {
     attributeNamePrefix: '__',
     ignoreAttributes: false
   });
-
+  
   const {
     actionList,
     serviceStateTable
